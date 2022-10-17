@@ -1,31 +1,29 @@
 const express = require('express')
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
+const { MONGO_USER, MONGO_PASSWORD, MONGO_IP, MONGO_PORT } = require('./config/config');
 
 const app = express();
 
-mongoose.connect(
-    "mongodb://thiernos:mypassword@mongo:27017/?authSource=admin"
-).then(() => console.log('succesfully connected to DB'))
-    .catch((e) => {
-        console.log(e)
-        console.log('retry connecting every 5 seconds...')
-    })
+// "mongodb://thiernos:mypassword@127.0.0.2:27017/?authSource=admin"
+// "mongodb://thiernos:mypassword@mongo:27017/?authSource=admin"
 
-// const connectWithRetry = () => {
-//     mongoose
-//         .connect(mongoURL, {
-//             useNewUrlParser: true,
-//             useUnifiedTopology: true
-//         })
-//         .then(() => console.log('succesfully connected to DB'))
-//         .catch((e) => {
-//             console.log(e)
-//             console.log('retry connecting every 5 seconds...')
-//             setTimeout(connectWithRetry, 5000)
-//         })
-// }
+const mongoURL = `mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_IP}:${MONGO_PORT}/?authSource=admin`
 
-// connectWithRetry()
+const connectWithRetry = () => {
+    mongoose
+        .connect(mongoURL, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true
+        })
+        .then(() => console.log('succesfully connected to DB'))
+        .catch((e) => {
+            console.log(e)
+            console.log('retry connecting every 5 seconds...')
+            setTimeout(connectWithRetry, 5000)
+        })
+}
+
+connectWithRetry()
 
 app.get("/", (req, res) => {
     res.send("<h2>hi there!!</h2>")
