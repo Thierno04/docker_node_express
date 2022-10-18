@@ -1,5 +1,8 @@
-version: '3'
+version: "3"
 services:
+  nginx:
+    ports:
+      - "3000:80"
   node-app:
     build: 
       context: .
@@ -15,7 +18,6 @@ services:
       - SESSION_SECRET=secret
 
     command: npm run dev
-
   mongo:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=thiernos
